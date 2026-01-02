@@ -2,136 +2,148 @@
 <html>
 <head>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Montserrat:wght@300;900&display=swap');
+
         body { 
             background: #050000; 
             color: #ff3333; 
-            font-family: 'Montserrat', 'Segoe UI', sans-serif; 
+            font-family: 'Montserrat', sans-serif; 
             margin: 0;
             overflow: hidden;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
 
-        /* Улучшенная сетка */
+        /* Анимированная сетка на фоне */
         #grid-bg {
             position: fixed;
-            top: 0; left: 0; width: 200%; height: 200%;
+            top: -50%; left: -50%; width: 200%; height: 200%;
             background-image: 
                 linear-gradient(to right, rgba(255, 0, 0, 0.05) 1px, transparent 1px),
                 linear-gradient(to bottom, rgba(255, 0, 0, 0.05) 1px, transparent 1px);
-            background-size: 60px 60px;
-            transform: rotate(-12deg);
-            animation: gridScroll 20s linear infinite;
-            z-index: -2;
+            background-size: 50px 50px;
+            transform: rotate(15deg);
+            animation: gridMove 30s linear infinite;
+            z-index: -1;
         }
-        @keyframes gridScroll { from { background-position: 0 0; } to { background-position: 0 60px; } }
+        @keyframes gridMove { from { background-position: 0 0; } to { background-position: 0 500px; } }
 
-        /* Контейнер логотипа */
-        .logo-wrapper {
+        /* Контейнер логотипа с общим центрированием */
+        .logo-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 90px;
-            font-weight: 900;
-            font-style: italic;
             position: relative;
-            animation: center-all 1.5s 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            /* Вся группа смещается влево, чтобы итоговый текст был в центре */
+            animation: finalCenter 1.2s 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .char-z {
+        .z-letter {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 100px;
             color: #ff0000;
-            display: inline-block;
             opacity: 0;
-            filter: blur(10px);
-            transform: scale(3);
-            text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            filter: blur(20px);
+            transform: scale(2);
+            text-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
             animation: 
-                z-appear 1s cubic-bezier(0.16, 1, 0.3, 1) forwards,
-                z-move-left 0.8s 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+                z-entry 1s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+                z-slide 0.8s 1.5s cubic-bezier(0.87, 0, 0.13, 1) forwards;
         }
 
-        .rest-text {
+        .suffix {
             display: flex;
             overflow: hidden;
             width: 0;
             opacity: 0;
             white-space: nowrap;
-            animation: reveal-grad 1s 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            font-size: 100px;
+            font-weight: 900;
+            animation: revealSuffix 0.8s 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .dash { color: #ff0000; margin-right: 5px; }
-        .grad { color: #ffffff; text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
+        .grad { color: #ffffff; text-shadow: 0 0 25px rgba(255, 255, 255, 0.4); }
 
-        /* Анимации */
-        @keyframes z-appear {
+        /* Плавные анимации */
+        @keyframes z-entry {
             to { opacity: 1; filter: blur(0); transform: scale(1); }
         }
 
-        @keyframes z-move-left {
-            to { transform: translateX(-40px); }
+        @keyframes z-slide {
+            to { transform: translateX(-20px); }
         }
 
-        @keyframes reveal-grad {
-            to { width: 320px; opacity: 1; }
+        @keyframes revealSuffix {
+            to { width: 380px; opacity: 1; transform: translateX(-15px); }
         }
 
-        /* Плавное смещение всей конструкции в центр после появления */
-        @keyframes center-all {
-            to { transform: translateX(-40px); } 
+        @keyframes finalCenter {
+            /* Сдвигаем весь блок, чтобы визуально уравновесить Z и GRAD */
+            to { transform: translateX(-50px); }
         }
 
-        /* Инфо-блок */
-        .info { 
+        /* Информационный блок */
+        .loading-box { 
             position: fixed; 
-            bottom: 60px;
-            background: rgba(15, 0, 0, 0.9);
-            padding: 20px 50px;
-            border: 1px solid rgba(255, 0, 0, 0.5);
-            border-radius: 100px; /* Идеально закругленные края */
-            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(255, 0, 0, 0.1);
+            bottom: 80px;
+            background: rgba(20, 0, 0, 0.8);
+            padding: 20px 40px;
+            border-radius: 100px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
             text-align: center;
-            min-width: 350px;
+            min-width: 400px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
         }
 
-        .bar { 
-            width: 100%; height: 6px; background: #200000; 
-            border-radius: 10px; margin-top: 15px;
-            overflow: hidden;
+        .progress-bar { 
+            width: 100%; height: 4px; background: rgba(255, 0, 0, 0.1); 
+            border-radius: 10px; margin-top: 15px; overflow: hidden;
         }
 
         #fill { 
-            width: 0%; height: 100%; 
-            background: #ff0000; 
+            width: 0%; height: 100%; background: #ff0000; 
             box-shadow: 0 0 15px #ff0000;
-            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1); 
         }
 
-        #status { font-size: 12px; letter-spacing: 3px; font-weight: 300; opacity: 0.8; }
+        #status { font-size: 11px; text-transform: uppercase; letter-spacing: 4px; opacity: 0.7; }
     </style>
 </head>
 <body>
     <div id="grid-bg"></div>
     
-    <div class="logo-wrapper">
-        <span class="char-z">Z</span>
-        <span class="rest-text">
-            <span class="dash">-</span><span class="grad">GRAD</span>
-        </span>
+    <div class="logo-container">
+        <span class="z-letter">Z</span>
+        <div class="suffix">
+            <span class="dash">-</span>
+            <span class="grad">GRAD</span>
+        </div>
     </div>
 
-    <div class="info">
-        <div id="status">SYNCHRONIZING WITH SERVER</div>
-        <div class="bar"><div id="fill"></div></div>
+    <div class="loading-box">
+        <div id="status">Establishing Link</div>
+        <div class="progress-bar"><div id="fill"></div></div>
     </div>
 
     <script>
+        // Функции для связи с Garry's Mod
         function SetProgress(fraction) {
             document.getElementById('fill').style.width = (fraction * 100) + "%";
         }
+
         function DownloadingFile(fileName) {
-            document.getElementById('status').innerText = "LOAD: " + fileName;
+            document.getElementById('status').innerText = "Receiving: " + fileName;
+        }
+
+        function SetFilesNeeded(needed) {
+            if (needed > 0) {
+                document.getElementById('status').innerText = "Segments remaining: " + needed;
+            }
         }
     </script>
 </body>
