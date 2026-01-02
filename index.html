@@ -2,19 +2,80 @@
 <html>
 <head>
     <style>
-        body { background: #111; color: #0f0; font-family: monospace; overflow: hidden; }
+        body { 
+            background: #1a0000; 
+            color: #ff3333; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0;
+            overflow: hidden; 
+        }
+        
+        /* Анимированный фон с сеткой */
+        #grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(255, 0, 0, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 0, 0, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: move 5s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes move {
+            from { background-position: 0 0; }
+            to { background-position: 50px 50px; }
+        }
+
         #canvas { position: absolute; top: 0; left: 0; }
-        .info { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); text-align: center; }
-        .bar { width: 400px; height: 20px; border: 1px solid #0f0; margin-top: 10px; }
-        #fill { width: 0%; height: 100%; background: #0f0; transition: width 0.3s; }
+
+        .info { 
+            position: absolute; 
+            bottom: 50px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            text-align: center;
+            background: rgba(40, 0, 0, 0.8);
+            padding: 20px;
+            border: 2px solid #ff0000;
+            border-radius: 25px; /* Закругленный стиль */
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+            backdrop-filter: blur(5px);
+            min-width: 450px;
+        }
+
+        .bar { 
+            width: 100%; 
+            height: 15px; 
+            background: #330000; 
+            border-radius: 10px; /* Закругленная полоска */
+            margin-top: 15px;
+            overflow: hidden;
+            border: 1px solid #550000;
+        }
+
+        #fill { 
+            width: 0%; 
+            height: 100%; 
+            background: linear-gradient(90deg, #ff0000, #ff6666); 
+            transition: width 0.4s ease-out; 
+        }
+
+        #status { font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        #needed { margin-top: 5px; font-size: 0.8em; opacity: 0.7; }
     </style>
 </head>
 <body>
+    <div id="grid-bg"></div>
     <canvas id="canvas"></canvas>
+    
     <div class="info">
-        <div id="status">CONNECTING TO P2P NETWORK...</div>
+        <div id="status">P2P: Initialization...</div>
         <div class="bar"><div id="fill"></div></div>
-        <div id="needed">Files remaining: 0</div>
+        <div id="needed">Waiting for server response</div>
     </div>
 
     <script>
@@ -23,34 +84,32 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        // Функция, которую вызывает сам Garry's Mod
-        function DownloadingFile(fileName) {
-            document.getElementById('status').innerText = "GETTING FROM PEER: " + fileName;
-        }
-
-        function SetFilesNeeded(needed) {
-            document.getElementById('needed').innerText = "Files remaining: " + needed;
-        }
-
-        function SetProgress(progress) {
-            document.getElementById('fill').style.width = (progress * 100) + "%";
-        }
-
-        // Анимация точек (пиров)
         const peers = [];
-        for(let i=0; i<15; i++) {
-            peers.push({x: Math.random()*canvas.width, y: Math.random()*canvas.height, s: Math.random()*2});
+        for(let i=0; i<20; i++) {
+            peers.push({
+                x: Math.random() * canvas.width, 
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2
+            });
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#0f0";
+            ctx.fillStyle = "#ff0000";
+            
             peers.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, 3, 0, Math.PI*2);
+                ctx.arc(p.x, p.y, 4, 0, Math.PI*2);
                 ctx.fill();
-                // Линии к центру
-                ctx.strokeStyle = "rgba(0, 255, 0, 0.1)";
+
+                ctx.strokeStyle = "rgba(255, 0, 0, 0.2)";
+                ctx.lineWidth = 1;
                 ctx.beginPath();
                 ctx.moveTo(p.x, p.y);
                 ctx.lineTo(canvas.width/2, canvas.height/2);
@@ -58,6 +117,20 @@
             });
             requestAnimationFrame(draw);
         }
+
+        // Функции Gmod
+        function DownloadingFile(fileName) {
+            document.getElementById('status').innerText = "PEER DATA: " + fileName;
+        }
+
+        function SetFilesNeeded(needed) {
+            document.getElementById('needed').innerText = "Nodes remaining: " + needed;
+        }
+
+        function SetProgress(progress) {
+            document.getElementById('fill').style.width = (progress * 100) + "%";
+        }
+
         draw();
     </script>
 </body>
