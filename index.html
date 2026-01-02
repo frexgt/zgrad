@@ -3,103 +3,118 @@
 <head>
     <style>
         body { 
-            background: #0a0000; 
+            background: #050000; 
             color: #ff3333; 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Montserrat', 'Segoe UI', sans-serif; 
             margin: 0;
-            overflow: hidden; 
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
 
-        /* Фоновая красная сетка */
+        /* Улучшенная сетка */
         #grid-bg {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0; left: 0; width: 200%; height: 200%;
             background-image: 
-                linear-gradient(to right, rgba(255, 0, 0, 0.1) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 0, 0, 0.1) 1px, transparent 1px);
-            background-size: 45px 45px;
-            animation: gridMove 10s linear infinite;
+                linear-gradient(to right, rgba(255, 0, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: rotate(-12deg);
+            animation: gridScroll 20s linear infinite;
             z-index: -2;
         }
-        @keyframes gridMove { from { background-position: 0 0; } to { background-position: 45px 45px; } }
+        @keyframes gridScroll { from { background-position: 0 0; } to { background-position: 0 60px; } }
 
-        /* Анимация логотипа Z-GRAD */
-        .logo-container {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        /* Контейнер логотипа */
+        .logo-wrapper {
             display: flex;
             align-items: center;
-            font-size: 80px;
+            justify-content: center;
+            font-size: 90px;
             font-weight: 900;
-            letter-spacing: -5px;
-            text-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+            font-style: italic;
+            position: relative;
+            animation: center-all 1.5s 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
 
         .char-z {
             color: #ff0000;
             display: inline-block;
-            animation: z-entry 2s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+            opacity: 0;
+            filter: blur(10px);
+            transform: scale(3);
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.8);
+            animation: 
+                z-appear 1s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+                z-move-left 0.8s 1.2s cubic-bezier(0.7, 0, 0.3, 1) forwards;
         }
 
         .rest-text {
-            display: inline-block;
+            display: flex;
             overflow: hidden;
-            white-space: nowrap;
             width: 0;
-            animation: reveal-grad 1s 1.5s forwards;
+            opacity: 0;
+            white-space: nowrap;
+            animation: reveal-grad 1s 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .dash { color: #ff0000; }
-        .grad { color: #ffffff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
+        .dash { color: #ff0000; margin-right: 5px; }
+        .grad { color: #ffffff; text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); }
 
-        @keyframes z-entry {
-            0% { transform: scale(0); opacity: 0; }
-            40% { transform: scale(1.5); opacity: 1; }
-            70% { transform: scale(1); transform: translateX(0); }
-            100% { transform: translateX(-120px); } /* Сдвиг влево */
+        /* Анимации */
+        @keyframes z-appear {
+            to { opacity: 1; filter: blur(0); transform: scale(1); }
+        }
+
+        @keyframes z-move-left {
+            to { transform: translateX(-40px); }
         }
 
         @keyframes reveal-grad {
-            from { width: 0; opacity: 0; }
-            to { width: 300px; opacity: 1; transform: translateX(-110px); }
+            to { width: 320px; opacity: 1; }
         }
 
-        /* Блок информации загрузки */
+        /* Плавное смещение всей конструкции в центр после появления */
+        @keyframes center-all {
+            to { transform: translateX(-40px); } 
+        }
+
+        /* Инфо-блок */
         .info { 
-            position: absolute; 
-            bottom: 50px; left: 50%; transform: translateX(-50%); 
+            position: fixed; 
+            bottom: 60px;
+            background: rgba(15, 0, 0, 0.9);
+            padding: 20px 50px;
+            border: 1px solid rgba(255, 0, 0, 0.5);
+            border-radius: 100px; /* Идеально закругленные края */
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(255, 0, 0, 0.1);
             text-align: center;
-            background: rgba(30, 0, 0, 0.85);
-            padding: 25px 40px;
-            border: 2px solid #ff0000;
-            border-radius: 50px; 
-            box-shadow: 0 0 40px rgba(255, 0, 0, 0.3);
-            backdrop-filter: blur(8px);
-            min-width: 400px;
+            min-width: 350px;
         }
 
         .bar { 
-            width: 100%; height: 12px; background: rgba(80, 0, 0, 0.3); 
-            border-radius: 20px; margin-top: 15px;
-            overflow: hidden; border: 1px solid #660000;
+            width: 100%; height: 6px; background: #200000; 
+            border-radius: 10px; margin-top: 15px;
+            overflow: hidden;
         }
 
         #fill { 
             width: 0%; height: 100%; 
-            background: linear-gradient(90deg, #990000, #ff0000); 
+            background: #ff0000; 
             box-shadow: 0 0 15px #ff0000;
-            transition: width 0.4s ease; 
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
         }
 
-        #status { font-size: 14px; text-transform: uppercase; font-weight: bold; color: #ff6666; }
+        #status { font-size: 12px; letter-spacing: 3px; font-weight: 300; opacity: 0.8; }
     </style>
 </head>
 <body>
     <div id="grid-bg"></div>
     
-    <div class="logo-container">
+    <div class="logo-wrapper">
         <span class="char-z">Z</span>
         <span class="rest-text">
             <span class="dash">-</span><span class="grad">GRAD</span>
@@ -107,26 +122,17 @@
     </div>
 
     <div class="info">
-        <div id="status">CONNECTING TO P2P NODES...</div>
+        <div id="status">SYNCHRONIZING WITH SERVER</div>
         <div class="bar"><div id="fill"></div></div>
     </div>
 
     <script>
-        // Интеграция с Gmod
         function SetProgress(fraction) {
             document.getElementById('fill').style.width = (fraction * 100) + "%";
         }
-
         function DownloadingFile(fileName) {
-            document.getElementById('status').innerText = "DOWNLOADING: " + fileName;
+            document.getElementById('status').innerText = "LOAD: " + fileName;
         }
-
-        // Для теста в браузере (можно удалить)
-        let p = 0;
-        setInterval(() => {
-            if(p < 1) p += 0.01;
-            SetProgress(p);
-        }, 100);
     </script>
 </body>
 </html>
